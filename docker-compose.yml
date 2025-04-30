@@ -1,0 +1,17 @@
+services:
+  query-builder_lib:
+    build:
+      dockerfile: Dockerfile
+      context: .docker/php
+    container_name: query-builder_lib
+    restart: "no"
+    working_dir: /app
+    volumes:
+      - ./:/app
+
+volumes:
+  db:
+networks:
+  default:
+    external: true
+    name: shared-network
