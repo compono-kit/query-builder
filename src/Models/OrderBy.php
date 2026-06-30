@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
-use ComponoKit\QueryBuilder\Models\Types\OrderDirection;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\OrderDirection;
 
 class OrderBy implements RepresentsOrderBy
 {

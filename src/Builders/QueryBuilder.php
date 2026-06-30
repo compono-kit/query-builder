@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Builders;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
-use ComponoKit\QueryBuilder\Builders\Interfaces\BuildsQueries;
-use ComponoKit\QueryBuilder\Helpers\QueryFilterDistributor;
-use ComponoKit\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsCriteria;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsLimit;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces\BuildsQueries;
+use ComponoKit\Databases\Sql\QueryBuilder\Helpers\QueryFilterDistributor;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsLimit;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
 
 class QueryBuilder implements BuildsQueries
 {
@@ -19,7 +19,7 @@ class QueryBuilder implements BuildsQueries
 		$this->queryFilterDistributor = $queryFilterDistributor ?? QueryFilterDistributor::newEmpty();
 	}
 
-	public function addOrderBy( RepresentsOrderBy $orderBy ): self
+	public function addOrderBy( RepresentsOrderBy $orderBy ): static
 	{
 		$queryFilterDistributor = $this->queryFilterDistributor->addOrderBy( $orderBy );
 
@@ -28,24 +28,22 @@ class QueryBuilder implements BuildsQueries
 
 	/**
 	 * @param RepresentsOrderBy[] $orderByList
-	 *
-	 * @return self
 	 */
-	public function addOrderByList( array $orderByList ): self
+	public function addOrderByList( array $orderByList ): static
 	{
 		$queryFilterDistributor = $this->queryFilterDistributor->addOrderByList( $orderByList );
 
 		return new self( $queryFilterDistributor );
 	}
 
-	public function useLimit( RepresentsLimit $limit ): self
+	public function useLimit( RepresentsLimit $limit ): static
 	{
 		$queryFilterDistributor = $this->queryFilterDistributor->useLimit( $limit );
 
 		return new self( $queryFilterDistributor );
 	}
 
-	public function addCriteria( RepresentsCriteria $criteria ): self
+	public function addCriteria( RepresentsCriteria $criteria ): static
 	{
 		$queryFilterDistributor = $this->queryFilterDistributor->addCriteria( $criteria );
 
@@ -54,12 +52,34 @@ class QueryBuilder implements BuildsQueries
 
 	/**
 	 * @param RepresentsCriteria[] $criterias
-	 *
-	 * @return $this
 	 */
-	public function addCriterias( array $criterias ): self
+	public function addCriterias( array $criterias ): static
 	{
 		$queryFilterDistributor = $this->queryFilterDistributor->addCriterias( $criterias );
+
+		return new self( $queryFilterDistributor );
+	}
+
+	public function addHavingCriteria( RepresentsCriteria $criteria ): static
+	{
+		$queryFilterDistributor = $this->queryFilterDistributor->addHavingCriteria( $criteria );
+
+		return new self( $queryFilterDistributor );
+	}
+
+	public function addGroupByColumn( RepresentsColumn $column ): static
+	{
+		$queryFilterDistributor = $this->queryFilterDistributor->addGroupByColumn( $column );
+
+		return new self( $queryFilterDistributor );
+	}
+
+	/**
+	 * @param RepresentsColumn[] $groupByColumns
+	 */
+	public function addGroupByList( array $groupByColumns ): static
+	{
+		$queryFilterDistributor = $this->queryFilterDistributor->addGroupByList( $groupByColumns );
 
 		return new self( $queryFilterDistributor );
 	}
@@ -74,14 +94,9 @@ class QueryBuilder implements BuildsQueries
 		return WhereStatementBuilder::getPreparedParams( $this->queryFilterDistributor->getCriterias() );
 	}
 
-	/**
-	 * @param RepresentsColumn[] $groupByColumns
-	 *
-	 * @return string
-	 */
-	public function buildGroupBy( array $groupByColumns ): string
+	public function buildGroupBy(): string
 	{
-		return GroupByBuilder::build( $groupByColumns );
+		return GroupByBuilder::build( $this->queryFilterDistributor->getGroupByColumns() );
 	}
 
 	public function buildOrderBy(): string
@@ -99,13 +114,13 @@ class QueryBuilder implements BuildsQueries
 		return '';
 	}
 
-	/**
-	 * @param RepresentsColumn[] $groupByColumns
-	 *
-	 * @return string
-	 */
-	public function buildAll( array $groupByColumns = [] ): string
+	public function buildHaving(): string
 	{
-		return $this->buildWhereStatement() . $this->buildGroupBy( $groupByColumns ) . $this->buildOrderBy() . $this->buildLimit();
+		return HavingBuilder::build( $this->queryFilterDistributor->getHavingCriterias() );
+	}
+
+	public function buildAll(): string
+	{
+		return $this->buildWhereStatement() . $this->buildGroupBy() . $this->buildHaving() . $this->buildOrderBy() . $this->buildLimit();
 	}
 }

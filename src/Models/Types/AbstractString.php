@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models\Types;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models\Types;
 
-use ComponoKit\QueryBuilder\Exceptions\ValidationException;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\ValidationException;
 
 abstract class AbstractString implements \Stringable, \JsonSerializable
 {

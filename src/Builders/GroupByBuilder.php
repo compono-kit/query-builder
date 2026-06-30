@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Builders;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
 
 class GroupByBuilder
 {

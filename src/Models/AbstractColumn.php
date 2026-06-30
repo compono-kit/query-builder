@@ -1,14 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Helpers\Quoter;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
 
 abstract class AbstractColumn implements RepresentsColumn
 {
 	public function toString(): string
 	{
-		return $this->getTableName()->toString() . '.' . $this->getColumnName()->toString();
+		if ( $this->getTableName()->getName() === '' )
+		{
+			return $this->getColumnName()->toString();
+		}
+
+		return Quoter::quote( $this->getTableName()->getName() ) . '.' . $this->getColumnName()->toString();
 	}
 
 	public function __toString(): string

@@ -18,12 +18,12 @@
   },
   "autoload": {
     "psr-4": {
-      "ComponoKit\\QueryBuilder\\": "src/"
+      "ComponoKit\\Databases\\Sql\\QueryBuilder\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "ComponoKit\\QueryBuilder\\Tests\\": "tests/"
+      "ComponoKit\\Databases\\Sql\\QueryBuilder\\Tests\\": "tests/"
     }
   }
 }

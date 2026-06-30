@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Criterias\Conditions;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions;
 
-use ComponoKit\QueryBuilder\Exceptions\MissingValueException;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsCriteria;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
-use ComponoKit\QueryBuilder\Models\PreparedParameter;
-use ComponoKit\QueryBuilder\Models\Types\ComparisonOperator;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\MissingValueException;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\PreparedParameter;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\ComparisonOperator;
 
 abstract class AbstractInCondition implements RepresentsCriteria
 {
@@ -54,7 +54,7 @@ abstract class AbstractInCondition implements RepresentsCriteria
 	 */
 	private function init( RepresentsColumn $column, ?array $values, ?string $subQuery ): void
 	{
-		if ( !$values )
+		if ( $values )
 		{
 			$this->setPreparedParameters( $column, $values );
 		}
@@ -74,7 +74,7 @@ abstract class AbstractInCondition implements RepresentsCriteria
 	{
 		foreach ( $values as $index => $value )
 		{
-			$this->preparedParameters[] = new PreparedParameter( sprintf( '%s_%d', $column->getColumnName()->getPureName(), $index ), $value );
+			$this->preparedParameters[] = new PreparedParameter( sprintf( '%s_%d', $column->getColumnName()->getPureName(), $index ), (string)$value );
 		}
 	}
 

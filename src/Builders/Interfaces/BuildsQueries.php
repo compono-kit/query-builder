@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Builders\Interfaces;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsLimit;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
 
 interface BuildsQueries
 {
@@ -10,21 +13,35 @@ interface BuildsQueries
 
 	public function getPreparedParams(): array;
 
-	/**
-	 * @param RepresentsColumn[] $groupByColumns
-	 *
-	 * @return string
-	 */
-	public function buildGroupBy( array $groupByColumns ): string;
+	public function buildGroupBy(): string;
 
 	public function buildOrderBy(): string;
 
 	public function buildLimit(): string;
 
+	public function buildHaving(): string;
+
+	public function buildAll(): string;
+
+	public function addCriteria( RepresentsCriteria $criteria ): static;
+
+	public function addCriterias( array $criterias ): static;
+
+	public function addOrderBy( RepresentsOrderBy $orderBy ): static;
+
+	/**
+	 * @param RepresentsOrderBy[] $orderByList
+	 */
+	public function addOrderByList( array $orderByList ): static;
+
+	public function addGroupByColumn( RepresentsColumn $column ): static;
+
 	/**
 	 * @param RepresentsColumn[] $groupByColumns
-	 *
-	 * @return string
 	 */
-	public function buildAll( array $groupByColumns = [] ): string;
+	public function addGroupByList( array $groupByColumns ): static;
+
+	public function addHavingCriteria( RepresentsCriteria $criteria ): static;
+
+	public function useLimit( RepresentsLimit $limit ): static;
 }

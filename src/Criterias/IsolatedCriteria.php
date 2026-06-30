@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Criterias;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Criterias;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsCriteria;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
-use ComponoKit\QueryBuilder\Models\Types\LogicalOperator;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\LogicalOperator;
 
 class IsolatedCriteria implements RepresentsCriteria
 {
@@ -13,7 +13,7 @@ class IsolatedCriteria implements RepresentsCriteria
 
 	public function __construct( private readonly LogicalOperator $logicalOperator, RepresentsCriteria...$criterias )
 	{
-		$this->criterias       = $criterias;
+		$this->criterias = $criterias;
 	}
 
 	public function toString(): string

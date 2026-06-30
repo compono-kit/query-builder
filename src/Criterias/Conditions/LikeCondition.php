@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Criterias\Conditions;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions;
 
-use ComponoKit\QueryBuilder\Criterias\Conditions\Traits\InjectingConditionParams;
-use ComponoKit\QueryBuilder\Models\Types\ComparisonOperator;
+use ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions\Traits\InjectingConditionParams;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\ComparisonOperator;
 
 class LikeCondition extends AbstractDefaultCondition
 {

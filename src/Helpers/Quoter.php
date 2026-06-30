@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Helpers;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Helpers;
 
 class Quoter
 {

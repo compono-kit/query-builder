@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Criterias\Conditions;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsCriteria;
-use ComponoKit\QueryBuilder\Models\Types\ComparisonOperator;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\ComparisonOperator;
 
 abstract class AbstractNullCondition implements RepresentsCriteria
 {

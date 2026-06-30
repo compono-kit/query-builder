@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Criterias;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Criterias;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsCriteria;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
-use ComponoKit\QueryBuilder\Models\Types\LogicalOperator;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\LogicalOperator;
 
 class Criteria implements RepresentsCriteria
 {
@@ -13,7 +13,7 @@ class Criteria implements RepresentsCriteria
 
 	public function __construct( private readonly LogicalOperator $logicalOperator, RepresentsCriteria...$criterias )
 	{
-		$this->criterias       = $criterias;
+		$this->criterias = $criterias;
 	}
 
 	public function addCriteria( RepresentsCriteria...$criterias ): self
@@ -49,6 +49,17 @@ class Criteria implements RepresentsCriteria
 		}
 
 		return $criterias ? implode( ' ' . $this->logicalOperator->name . ' ', $criterias ) : '';
+	}
+
+	public function getLogicalOperator(): LogicalOperator
+	{
+		return $this->logicalOperator;
+	}
+
+	/** @return RepresentsCriteria[] */
+	public function getCriterias(): array
+	{
+		return $this->criterias;
 	}
 
 	public function jsonSerialize(): array

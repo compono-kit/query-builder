@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models\Interfaces;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces;
 
-use ComponoKit\QueryBuilder\Models\Types\OrderDirection;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\OrderDirection;
 
 interface RepresentsOrderBy
 {

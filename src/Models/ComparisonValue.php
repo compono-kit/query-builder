@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsComparisonValue;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsComparisonValue;
 
 class ComparisonValue implements RepresentsComparisonValue
 {

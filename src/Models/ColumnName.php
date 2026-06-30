@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models;
 
-use ComponoKit\QueryBuilder\Helpers\Quoter;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumnName;
+use ComponoKit\Databases\Sql\QueryBuilder\Helpers\Quoter;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumnName;
 
 class ColumnName implements RepresentsColumnName
 {

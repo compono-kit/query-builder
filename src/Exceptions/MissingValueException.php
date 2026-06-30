@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Exceptions;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Exceptions;
 
 class MissingValueException extends \LogicException
 {

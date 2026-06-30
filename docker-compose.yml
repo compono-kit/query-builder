@@ -1,9 +1,9 @@
 services:
-  query-builder_lib:
+  query-builder_composer:
     build:
       dockerfile: Dockerfile
       context: .docker/php
-    container_name: query-builder_lib
+    container_name: query-builder_composer
     restart: "no"
     working_dir: /app
     volumes:

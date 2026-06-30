@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Validators;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Validators;
 
-use ComponoKit\QueryBuilder\Exceptions\ValidationException;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\ValidationException;
 
 class ColumnNameValidator
 {

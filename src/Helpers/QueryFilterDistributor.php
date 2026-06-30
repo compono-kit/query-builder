@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Helpers;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Helpers;
 
-use ComponoKit\QueryBuilder\Builders\WhereStatementBuilder;
-use ComponoKit\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsCriteria;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsLimit;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\WhereStatementBuilder;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsLimit;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
 
 class QueryFilterDistributor implements DistributesQueryFilters
 {
@@ -14,9 +15,16 @@ class QueryFilterDistributor implements DistributesQueryFilters
 	 * @param RepresentsCriteria[] $whereCriterias
 	 * @param RepresentsOrderBy[]  $orderByList
 	 * @param RepresentsLimit|null $limit
+	 * @param RepresentsCriteria[] $havingCriterias
+	 * @param RepresentsColumn[]   $groupByColumns
 	 */
-	public function __construct( private readonly array $whereCriterias, private readonly array $orderByList = [], private readonly ?RepresentsLimit $limit = null )
-	{
+	public function __construct(
+		private readonly array $whereCriterias,
+		private readonly array $orderByList = [],
+		private readonly ?RepresentsLimit $limit = null,
+		private readonly array $havingCriterias = [],
+		private readonly array $groupByColumns = []
+	) {
 	}
 
 	public static function newEmpty(): self
@@ -41,7 +49,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 
 	public function useLimit( RepresentsLimit $limit ): DistributesQueryFilters
 	{
-		return new self( $this->whereCriterias, $this->orderByList, $limit );
+		return new self( $this->whereCriterias, $this->orderByList, $limit, $this->havingCriterias, $this->groupByColumns );
 	}
 
 	public function addOrderBy( RepresentsOrderBy $orderBy ): self
@@ -49,7 +57,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		$orderByList   = $this->orderByList;
 		$orderByList[] = $orderBy;
 
-		return new self( $this->whereCriterias, $orderByList, $this->limit );
+		return new self( $this->whereCriterias, $orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
 	}
 
 	/**
@@ -66,7 +74,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 			$updatedOrderByList[] = $orderBy;
 		}
 
-		return new self( $this->whereCriterias, $updatedOrderByList, $this->limit );
+		return new self( $this->whereCriterias, $updatedOrderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
 	}
 
 	public function addCriteria( RepresentsCriteria $criteria ): self
@@ -74,7 +82,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		$criterias   = $this->whereCriterias;
 		$criterias[] = $criteria;
 
-		return new self( $criterias, $this->orderByList, $this->limit );
+		return new self( $criterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
 	}
 
 	/**
@@ -91,7 +99,50 @@ class QueryFilterDistributor implements DistributesQueryFilters
 			$allCriterias[] = $additionalCriteria;
 		}
 
-		return new self( $allCriterias, $this->orderByList, $this->limit );
+		return new self( $allCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
+	}
+
+	public function addHavingCriteria( RepresentsCriteria $criteria ): self
+	{
+		$havingCriterias   = $this->havingCriterias;
+		$havingCriterias[] = $criteria;
+
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $havingCriterias, $this->groupByColumns );
+	}
+
+	public function getHavingCriterias(): array
+	{
+		return $this->havingCriterias;
+	}
+
+	public function addGroupByColumn( RepresentsColumn $column ): self
+	{
+		$groupByColumns   = $this->groupByColumns;
+		$groupByColumns[] = $column;
+
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $groupByColumns );
+	}
+
+	/**
+	 * @param RepresentsColumn[] $groupByColumns
+	 *
+	 * @return self
+	 */
+	public function addGroupByList( array $groupByColumns ): self
+	{
+		$updatedGroupByColumns = $this->groupByColumns;
+
+		foreach ( $groupByColumns as $column )
+		{
+			$updatedGroupByColumns[] = $column;
+		}
+
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $updatedGroupByColumns );
+	}
+
+	public function getGroupByColumns(): array
+	{
+		return $this->groupByColumns;
 	}
 
 	public function getPreparedParams(): array

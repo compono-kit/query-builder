@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models;
 
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsColumn;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsComparisonValue;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsConditionValue;
-use ComponoKit\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsComparisonValue;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsConditionValue;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsPreparedParameter;
 
 class PreparedParameterCondition implements RepresentsConditionValue
 {

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\QueryBuilder\Models\Interfaces;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces;
 
 interface RepresentsColumn extends \Stringable
 {
