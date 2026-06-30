@@ -5,6 +5,7 @@ namespace ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers;
 class SqlClauseExtractor
 {
 	private const CLAUSE_PATTERNS = [
+		'join'    => '/(?=\b(?:(?:INNER|LEFT(?:\s+OUTER)?|RIGHT(?:\s+OUTER)?|CROSS)\s+)?JOIN\b)/i',
 		'where'   => '/\bWHERE\b/i',
 		'groupBy' => '/\bGROUP\s+BY\b/i',
 		'having'  => '/\bHAVING\b/i',
@@ -17,11 +18,12 @@ class SqlClauseExtractor
 	 * Splits a SQL string into its clause parts.
 	 * Note: does not handle clause keywords appearing inside string literals.
 	 *
-	 * @return array{where: ?string, groupBy: ?string, having: ?string, orderBy: ?string, limit: ?string, offset: ?string}
+	 * @return array{join: ?string, where: ?string, groupBy: ?string, having: ?string, orderBy: ?string, limit: ?string, offset: ?string}
 	 */
 	public static function extract(string $sql): array
 	{
 		$result = [
+			'join'    => null,
 			'where'   => null,
 			'groupBy' => null,
 			'having'  => null,

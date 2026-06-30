@@ -58,4 +58,18 @@ interface DistributesQueryFilters
 	public function getGroupByColumns(): array;
 
 	public function getPreparedParams(): array;
+
+	public function addJoinClause( RepresentsJoinClause $joinClause ): DistributesQueryFilters;
+
+	/**
+	 * @param RepresentsJoinClause[] $joinClauses
+	 *
+	 * @return DistributesQueryFilters
+	 */
+	public function addJoinClauses( array $joinClauses ): DistributesQueryFilters;
+
+	/**
+	 * @return RepresentsJoinClause[]
+	 */
+	public function getJoinClauses(): array;
 }

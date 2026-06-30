@@ -4,6 +4,7 @@ namespace ComponoKit\Databases\Sql\QueryBuilder\Factories;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Builders\QueryBuilder;
 use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\GroupByClauseParser;
+use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\JoinClauseParser;
 use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\LimitClauseParser;
 use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\OrderByClauseParser;
 use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\SqlClauseExtractor;
@@ -19,6 +20,11 @@ class SqlToQueryBuilderFactory
 	{
 		$clauses = SqlClauseExtractor::extract( $sql );
 		$builder = new QueryBuilder();
+
+		if ( $clauses['join'] !== null )
+		{
+			$builder = $builder->addJoinClauses( JoinClauseParser::parse( $clauses['join'] ) );
+		}
 
 		if ( $clauses['where'] !== null )
 		{

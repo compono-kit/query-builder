@@ -7,6 +7,7 @@ use ComponoKit\Databases\Sql\QueryBuilder\Helpers\QueryFilterDistributor;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsJoinClause;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsLimit;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
 
@@ -84,6 +85,28 @@ class QueryBuilder implements BuildsQueries
 		return new self( $queryFilterDistributor );
 	}
 
+	public function addJoinClause( RepresentsJoinClause $joinClause ): static
+	{
+		$queryFilterDistributor = $this->queryFilterDistributor->addJoinClause( $joinClause );
+
+		return new self( $queryFilterDistributor );
+	}
+
+	/**
+	 * @param RepresentsJoinClause[] $joinClauses
+	 */
+	public function addJoinClauses( array $joinClauses ): static
+	{
+		$queryFilterDistributor = $this->queryFilterDistributor->addJoinClauses( $joinClauses );
+
+		return new self( $queryFilterDistributor );
+	}
+
+	public function buildJoin(): string
+	{
+		return JoinBuilder::build( $this->queryFilterDistributor->getJoinClauses() );
+	}
+
 	public function buildWhereStatement(): string
 	{
 		return WhereStatementBuilder::buildWhereStatement( $this->queryFilterDistributor->getCriterias() );
@@ -121,6 +144,6 @@ class QueryBuilder implements BuildsQueries
 
 	public function buildAll(): string
 	{
-		return $this->buildWhereStatement() . $this->buildGroupBy() . $this->buildHaving() . $this->buildOrderBy() . $this->buildLimit();
+		return $this->buildJoin() . $this->buildWhereStatement() . $this->buildGroupBy() . $this->buildHaving() . $this->buildOrderBy() . $this->buildLimit();
 	}
 }

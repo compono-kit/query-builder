@@ -4,11 +4,14 @@ namespace ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsJoinClause;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsLimit;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
 
 interface BuildsQueries
 {
+	public function buildJoin(): string;
+
 	public function buildWhereStatement(): string;
 
 	public function getPreparedParams(): array;
@@ -44,4 +47,11 @@ interface BuildsQueries
 	public function addHavingCriteria( RepresentsCriteria $criteria ): static;
 
 	public function useLimit( RepresentsLimit $limit ): static;
+
+	public function addJoinClause( RepresentsJoinClause $joinClause ): static;
+
+	/**
+	 * @param RepresentsJoinClause[] $joinClauses
+	 */
+	public function addJoinClauses( array $joinClauses ): static;
 }

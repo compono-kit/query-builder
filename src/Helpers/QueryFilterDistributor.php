@@ -6,24 +6,27 @@ use ComponoKit\Databases\Sql\QueryBuilder\Builders\WhereStatementBuilder;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsJoinClause;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsLimit;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
 
 class QueryFilterDistributor implements DistributesQueryFilters
 {
 	/**
-	 * @param RepresentsCriteria[] $whereCriterias
-	 * @param RepresentsOrderBy[]  $orderByList
-	 * @param RepresentsLimit|null $limit
-	 * @param RepresentsCriteria[] $havingCriterias
-	 * @param RepresentsColumn[]   $groupByColumns
+	 * @param RepresentsCriteria[]  $whereCriterias
+	 * @param RepresentsOrderBy[]   $orderByList
+	 * @param RepresentsLimit|null  $limit
+	 * @param RepresentsCriteria[]  $havingCriterias
+	 * @param RepresentsColumn[]    $groupByColumns
+	 * @param RepresentsJoinClause[] $joinClauses
 	 */
 	public function __construct(
 		private readonly array $whereCriterias,
 		private readonly array $orderByList = [],
 		private readonly ?RepresentsLimit $limit = null,
 		private readonly array $havingCriterias = [],
-		private readonly array $groupByColumns = []
+		private readonly array $groupByColumns = [],
+		private readonly array $joinClauses = []
 	) {
 	}
 
@@ -49,7 +52,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 
 	public function useLimit( RepresentsLimit $limit ): DistributesQueryFilters
 	{
-		return new self( $this->whereCriterias, $this->orderByList, $limit, $this->havingCriterias, $this->groupByColumns );
+		return new self( $this->whereCriterias, $this->orderByList, $limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
 	public function addOrderBy( RepresentsOrderBy $orderBy ): self
@@ -57,7 +60,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		$orderByList   = $this->orderByList;
 		$orderByList[] = $orderBy;
 
-		return new self( $this->whereCriterias, $orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
+		return new self( $this->whereCriterias, $orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
 	/**
@@ -74,7 +77,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 			$updatedOrderByList[] = $orderBy;
 		}
 
-		return new self( $this->whereCriterias, $updatedOrderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
+		return new self( $this->whereCriterias, $updatedOrderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
 	public function addCriteria( RepresentsCriteria $criteria ): self
@@ -82,7 +85,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		$criterias   = $this->whereCriterias;
 		$criterias[] = $criteria;
 
-		return new self( $criterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
+		return new self( $criterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
 	/**
@@ -99,7 +102,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 			$allCriterias[] = $additionalCriteria;
 		}
 
-		return new self( $allCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns );
+		return new self( $allCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
 	public function addHavingCriteria( RepresentsCriteria $criteria ): self
@@ -107,7 +110,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		$havingCriterias   = $this->havingCriterias;
 		$havingCriterias[] = $criteria;
 
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $havingCriterias, $this->groupByColumns );
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
 	public function getHavingCriterias(): array
@@ -120,7 +123,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		$groupByColumns   = $this->groupByColumns;
 		$groupByColumns[] = $column;
 
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $groupByColumns );
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $groupByColumns, $this->joinClauses );
 	}
 
 	/**
@@ -137,7 +140,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 			$updatedGroupByColumns[] = $column;
 		}
 
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $updatedGroupByColumns );
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $updatedGroupByColumns, $this->joinClauses );
 	}
 
 	public function getGroupByColumns(): array
@@ -148,5 +151,33 @@ class QueryFilterDistributor implements DistributesQueryFilters
 	public function getPreparedParams(): array
 	{
 		return WhereStatementBuilder::getPreparedParams( $this->getCriterias() );
+	}
+
+	public function addJoinClause( RepresentsJoinClause $joinClause ): self
+	{
+		$joinClauses   = $this->joinClauses;
+		$joinClauses[] = $joinClause;
+
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $joinClauses );
+	}
+
+	/**
+	 * @param RepresentsJoinClause[] $joinClauses
+	 */
+	public function addJoinClauses( array $joinClauses ): self
+	{
+		$updatedJoinClauses = $this->joinClauses;
+
+		foreach ( $joinClauses as $joinClause )
+		{
+			$updatedJoinClauses[] = $joinClause;
+		}
+
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $updatedJoinClauses );
+	}
+
+	public function getJoinClauses(): array
+	{
+		return $this->joinClauses;
 	}
 }
