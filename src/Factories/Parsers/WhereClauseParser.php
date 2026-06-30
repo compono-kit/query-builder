@@ -213,10 +213,9 @@ class WhereClauseParser
 
 		return match ($token->type)
 		{
-			TokenType::STRING_VALUE => $token->value,
-			TokenType::NUMBER_VALUE => str_contains($token->value, '.') ? (float)$token->value : (int)$token->value,
-			TokenType::COLUMN       => $token->value,
-			default                 => throw new SqlParseException(sprintf('Expected value, got %s ("%s")', $token->type->name, $token->rawMatch)),
+			TokenType::STRING_VALUE, TokenType::COLUMN => $token->value,
+			TokenType::NUMBER_VALUE                    => str_contains($token->value, '.') ? (float)$token->value : (int)$token->value,
+			default                                    => throw new SqlParseException(sprintf('Expected value, got %s ("%s")', $token->type->name, $token->rawMatch)),
 		};
 	}
 
@@ -232,8 +231,6 @@ class WhereClauseParser
 			if ($token->type === TokenType::OPEN_PAREN)
 			{
 				$depth++;
-				$parts[] = $token->rawMatch;
-				$this->position++;
 			}
 			elseif ($token->type === TokenType::CLOSE_PAREN)
 			{
@@ -242,14 +239,9 @@ class WhereClauseParser
 					break;
 				}
 				$depth--;
-				$parts[] = $token->rawMatch;
-				$this->position++;
 			}
-			else
-			{
-				$parts[] = $token->rawMatch;
-				$this->position++;
-			}
+			$parts[] = $token->rawMatch;
+			$this->position++;
 		}
 
 		return implode(' ', $parts);
