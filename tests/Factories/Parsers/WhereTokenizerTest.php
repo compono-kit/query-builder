@@ -2,10 +2,10 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Tests\Factories\Parsers;
 
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Exceptions\SqlParseException;
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\Token;
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\TokenType;
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\WhereTokenizer;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\SqlParseException;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Token;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\TokenType;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\WhereTokenizer;
 use PHPUnit\Framework\TestCase;
 
 class WhereTokenizerTest extends TestCase

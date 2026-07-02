@@ -2,8 +2,8 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Tests\Factories\Parsers;
 
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Exceptions\SqlParseException;
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\LimitClauseParser;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\SqlParseException;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\LimitClauseParser;
 use PHPUnit\Framework\TestCase;
 
 class LimitClauseParserTest extends TestCase

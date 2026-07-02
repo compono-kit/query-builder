@@ -33,7 +33,7 @@ class JoinBuilderTest extends TestCase
 		$output     = JoinBuilder::build([$joinClause]);
 
 		$this->assertStringContainsString('INNER JOIN', $output);
-		$this->assertStringContainsString('`orders`', $output);
+		$this->assertStringContainsString('orders', $output);
 		$this->assertStringContainsString(' o ', $output);
 		$this->assertStringContainsString('ON', $output);
 	}
@@ -85,14 +85,14 @@ class JoinBuilderTest extends TestCase
 		$joinClause = new JoinClause(new TableName('orders'), JoinType::INNER, null);
 		$output     = JoinBuilder::build([$joinClause]);
 
-		$this->assertSame(' INNER JOIN `orders`', $output);
+		$this->assertSame(' INNER JOIN orders', $output);
 	}
 
-	public function testTableNameIsQuoted(): void
+	public function testTableNameWithHyphenIsQuoted(): void
 	{
-		$joinClause = new JoinClause(new TableName('order_items'), JoinType::INNER, null);
+		$joinClause = new JoinClause(new TableName('delivery-orders'), JoinType::INNER, null);
 		$output     = JoinBuilder::build([$joinClause]);
 
-		$this->assertStringContainsString('`order_items`', $output);
+		$this->assertStringContainsString('`delivery-orders`', $output);
 	}
 }

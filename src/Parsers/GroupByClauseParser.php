@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Parsers;
 
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Exceptions\SqlParseException;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\SqlParseException;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Column;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\ColumnName;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;

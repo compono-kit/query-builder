@@ -4,6 +4,7 @@ namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Helpers\Quoter;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsJoinClause;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsSubqueryJoinSource;
 
 class JoinBuilder
 {
@@ -32,11 +33,20 @@ class JoinBuilder
 
 	private static function buildSingle( RepresentsJoinClause $joinClause ): string
 	{
-		$tableSql = Quoter::quote( $joinClause->getJoinTable()->getName() );
+		$joinTable = $joinClause->getJoinTable();
 
-		if ( $joinClause->getJoinTable()->hasAlias() )
+		if ( $joinTable instanceof RepresentsSubqueryJoinSource )
 		{
-			$tableSql .= ' ' . $joinClause->getJoinTable()->getAlias();
+			$tableSql = $joinTable->toString();
+		}
+		else
+		{
+			$tableSql = Quoter::quote( $joinTable->getName() );
+
+			if ( $joinTable->hasAlias() )
+			{
+				$tableSql .= ' ' . $joinTable->getAlias();
+			}
 		}
 
 		$sql = $joinClause->getJoinType()->value . ' ' . $tableSql;

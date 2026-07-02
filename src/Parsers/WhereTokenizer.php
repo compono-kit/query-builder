@@ -1,8 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Parsers;
 
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Exceptions\SqlParseException;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\SqlParseException;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Token;
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\TokenType;
 
 class WhereTokenizer
 {

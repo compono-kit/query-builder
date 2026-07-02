@@ -23,7 +23,7 @@ class HavingBuilderTest extends TestCase
 		$column    = new Column(new TableName(''), new ColumnName('total'));
 		$condition = new Condition($column, ComparisonOperator::greaterOperator(), null, new ComparisonValue(5));
 
-		$this->assertSame(' HAVING `total` > 5', HavingBuilder::build([$condition]));
+		$this->assertSame(' HAVING total > 5', HavingBuilder::build([$condition]));
 	}
 
 	public function testMultipleConditionsJoinedWithAnd(): void
@@ -35,6 +35,6 @@ class HavingBuilderTest extends TestCase
 
 		$result = HavingBuilder::build([$condition1, $condition2]);
 
-		$this->assertSame(' HAVING `total` > 5 AND `count` < 100', $result);
+		$this->assertSame(' HAVING total > 5 AND count < 100', $result);
 	}
 }

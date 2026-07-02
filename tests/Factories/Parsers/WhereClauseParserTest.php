@@ -7,7 +7,7 @@ use ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions\IsNotNullConditio
 use ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions\IsNullCondition;
 use ComponoKit\Databases\Sql\QueryBuilder\Criterias\Criteria;
 use ComponoKit\Databases\Sql\QueryBuilder\Criterias\IsolatedCriteria;
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\WhereClauseParser;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\WhereClauseParser;
 use PHPUnit\Framework\TestCase;
 
 class WhereClauseParserTest extends TestCase
@@ -17,28 +17,28 @@ class WhereClauseParserTest extends TestCase
 		$criteria = WhereClauseParser::parse("id = 1");
 
 		$this->assertInstanceOf(Condition::class, $criteria);
-		$this->assertSame("`id` = 1", $criteria->toString());
+		$this->assertSame("id = 1", $criteria->toString());
 	}
 
 	public function testStringValue(): void
 	{
 		$criteria = WhereClauseParser::parse("status = 'active'");
 
-		$this->assertSame("`status` = 'active'", $criteria->toString());
+		$this->assertSame("status = 'active'", $criteria->toString());
 	}
 
 	public function testPreparedParameter(): void
 	{
 		$criteria = WhereClauseParser::parse("id = :userId");
 
-		$this->assertSame("`id` = :userId", $criteria->toString());
+		$this->assertSame("id = :userId", $criteria->toString());
 	}
 
 	public function testTablePrefixedColumn(): void
 	{
 		$criteria = WhereClauseParser::parse("users.id = 1");
 
-		$this->assertSame("`users`.`id` = 1", $criteria->toString());
+		$this->assertSame("users.id = 1", $criteria->toString());
 	}
 
 	public function testIsNull(): void
@@ -46,7 +46,7 @@ class WhereClauseParserTest extends TestCase
 		$criteria = WhereClauseParser::parse("deleted_at IS NULL");
 
 		$this->assertInstanceOf(IsNullCondition::class, $criteria);
-		$this->assertSame("`deleted_at` IS NULL", $criteria->toString());
+		$this->assertSame("deleted_at IS NULL", $criteria->toString());
 	}
 
 	public function testIsNotNull(): void
@@ -54,7 +54,7 @@ class WhereClauseParserTest extends TestCase
 		$criteria = WhereClauseParser::parse("deleted_at IS NOT NULL");
 
 		$this->assertInstanceOf(IsNotNullCondition::class, $criteria);
-		$this->assertSame("`deleted_at` IS NOT NULL", $criteria->toString());
+		$this->assertSame("deleted_at IS NOT NULL", $criteria->toString());
 	}
 
 	public function testAndExpression(): void
@@ -110,21 +110,21 @@ class WhereClauseParserTest extends TestCase
 	{
 		$criteria = WhereClauseParser::parse("name LIKE '%foo%'");
 
-		$this->assertSame("`name` LIKE '%foo%'", $criteria->toString());
+		$this->assertSame("name LIKE '%foo%'", $criteria->toString());
 	}
 
 	public function testNotLike(): void
 	{
 		$criteria = WhereClauseParser::parse("name NOT LIKE '%foo%'");
 
-		$this->assertSame("`name` NOT LIKE '%foo%'", $criteria->toString());
+		$this->assertSame("name NOT LIKE '%foo%'", $criteria->toString());
 	}
 
 	public function testGreaterThan(): void
 	{
 		$criteria = WhereClauseParser::parse("age > 18");
 
-		$this->assertSame("`age` > 18", $criteria->toString());
+		$this->assertSame("age > 18", $criteria->toString());
 	}
 
 	public function testOrWithAndGroupsAreWrapped(): void
@@ -141,14 +141,14 @@ class WhereClauseParserTest extends TestCase
 	{
 		$criteria = WhereClauseParser::parse("a.id = b.id");
 
-		$this->assertStringContainsString('`a`.`id`', $criteria->toString());
-		$this->assertStringContainsString('`b`.`id`', $criteria->toString());
+		$this->assertStringContainsString('a.id', $criteria->toString());
+		$this->assertStringContainsString('b.id', $criteria->toString());
 	}
 
 	public function testFloatValue(): void
 	{
 		$criteria = WhereClauseParser::parse("price > 9.99");
 
-		$this->assertSame("`price` > 9.99", $criteria->toString());
+		$this->assertSame("price > 9.99", $criteria->toString());
 	}
 }

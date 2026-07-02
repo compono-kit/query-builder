@@ -11,14 +11,14 @@ class Quoter
 
 	public static function quoteColumn( string $column ): string
 	{
-		$columnIds = [];
+		$parts = [];
 
-		foreach ( explode( '.', $column, 2 ) as $columnId )
+		foreach ( explode( '.', $column, 2 ) as $part )
 		{
-			$columnIds[] = self::quote( str_replace( "`", "``", $columnId ) );
+			$parts[] = self::quote( $part );
 		}
 
-		return implode( '.', $columnIds );
+		return implode( '.', $parts );
 	}
 
 	public static function quoteMultipleColumns( array $columns ): array
@@ -34,6 +34,11 @@ class Quoter
 
 	public static function quote( string $value ): string
 	{
-		return sprintf( '`%s`', $value );
+		if ( preg_match( '/^[a-zA-Z_][a-zA-Z0-9_]*$/', $value ) )
+		{
+			return $value;
+		}
+
+		return sprintf( '`%s`', str_replace( '`', '``', $value ) );
 	}
 }

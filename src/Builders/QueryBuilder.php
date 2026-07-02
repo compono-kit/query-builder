@@ -102,6 +102,11 @@ class QueryBuilder implements BuildsQueries
 		return new self( $queryFilterDistributor );
 	}
 
+	public function getJoinClauses(): array
+	{
+		return $this->queryFilterDistributor->getJoinClauses();
+	}
+
 	public function buildJoin(): string
 	{
 		return JoinBuilder::build( $this->queryFilterDistributor->getJoinClauses() );
@@ -142,8 +147,8 @@ class QueryBuilder implements BuildsQueries
 		return HavingBuilder::build( $this->queryFilterDistributor->getHavingCriterias() );
 	}
 
-	public function buildAll(): string
+	public function buildAll( SelectBuilder $selectBuilder ): string
 	{
-		return $this->buildJoin() . $this->buildWhereStatement() . $this->buildGroupBy() . $this->buildHaving() . $this->buildOrderBy() . $this->buildLimit();
+		return $selectBuilder->build() . $this->buildJoin() . $this->buildWhereStatement() . $this->buildGroupBy() . $this->buildHaving() . $this->buildOrderBy() . $this->buildLimit();
 	}
 }

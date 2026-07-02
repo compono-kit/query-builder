@@ -2,9 +2,9 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Tests\Factories\Parsers;
 
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Exceptions\SqlParseException;
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\OrderByClauseParser;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\SqlParseException;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\OrderDirection;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\OrderByClauseParser;
 use PHPUnit\Framework\TestCase;
 
 class OrderByClauseParserTest extends TestCase

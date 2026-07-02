@@ -2,8 +2,8 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Tests\Factories\Parsers;
 
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Exceptions\SqlParseException;
-use ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers\GroupByClauseParser;
+use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\SqlParseException;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\GroupByClauseParser;
 use PHPUnit\Framework\TestCase;
 
 class GroupByClauseParserTest extends TestCase

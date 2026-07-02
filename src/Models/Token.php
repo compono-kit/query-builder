@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ComponoKit\Databases\Sql\QueryBuilder\Factories\Parsers;
+namespace ComponoKit\Databases\Sql\QueryBuilder\Models;
+
+use ComponoKit\Databases\Sql\QueryBuilder\Models\Types\TokenType;
 
 class Token
 {
