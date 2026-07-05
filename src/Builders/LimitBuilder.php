@@ -3,25 +3,31 @@
 namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Limit;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\LimitClauseParser;
 
 class LimitBuilder
 {
-	private function __construct()
+	public function __construct( private readonly ?Limit $limit )
 	{
 	}
 
-	public static function build( ?Limit $limit ): string
+	public static function fromSql( string $limitClause, ?string $offsetClause = null ): self
 	{
-		if ( null === $limit || $limit->getCount() <= 0 )
+		return new self( LimitClauseParser::parse( $limitClause, $offsetClause ) );
+	}
+
+	public function build(): string
+	{
+		if ( null === $this->limit || $this->limit->getCount() <= 0 )
 		{
 			return '';
 		}
 
-		if ( $limit->getOffset() > 0 )
+		if ( $this->limit->getOffset() > 0 )
 		{
-			return sprintf( ' LIMIT %d,%d', $limit->getOffset(), $limit->getCount() );
+			return sprintf( ' LIMIT %d,%d', $this->limit->getOffset(), $this->limit->getCount() );
 		}
 
-		return ' LIMIT ' . $limit->getCount();
+		return ' LIMIT ' . $this->limit->getCount();
 	}
 }

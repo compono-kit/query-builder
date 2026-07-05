@@ -11,7 +11,7 @@ class SqlToQueryBuilderFactoryJoinTest extends TestCase
 	{
 		$factory = new SqlToQueryBuilderFactory( $sql );
 
-		return $factory->getQueryBuilder()->buildAll( $factory->buildSelectBuilder() );
+		return $factory->buildQueryBuilder()->buildAll( $factory->buildSelectBuilder() );
 	}
 
 	public function testSingleInnerJoin(): void

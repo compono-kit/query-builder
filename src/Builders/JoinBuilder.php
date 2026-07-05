@@ -5,33 +5,39 @@ namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 use ComponoKit\Databases\Sql\QueryBuilder\Helpers\Quoter;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsJoinClause;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsSubqueryJoinSource;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\JoinClauseParser;
 
 class JoinBuilder
 {
-	private function __construct()
-	{
-	}
-
 	/**
 	 * @param RepresentsJoinClause[] $joinClauses
 	 */
-	public static function build( array $joinClauses ): string
+	public function __construct( private readonly array $joinClauses )
 	{
-		if ( !$joinClauses )
+	}
+
+	public static function fromSql( string $joinClause ): self
+	{
+		return new self( JoinClauseParser::parse( $joinClause ) );
+	}
+
+	public function build(): string
+	{
+		if ( !$this->joinClauses )
 		{
 			return '';
 		}
 
 		$parts = [];
-		foreach ( $joinClauses as $joinClause )
+		foreach ( $this->joinClauses as $joinClause )
 		{
-			$parts[] = self::buildSingle( $joinClause );
+			$parts[] = $this->buildSingle( $joinClause );
 		}
 
 		return ' ' . implode( ' ', $parts );
 	}
 
-	private static function buildSingle( RepresentsJoinClause $joinClause ): string
+	private function buildSingle( RepresentsJoinClause $joinClause ): string
 	{
 		$joinTable = $joinClause->getJoinTable();
 

@@ -12,7 +12,7 @@ class SqlToQueryBuilderFactoryTest extends TestCase
 	{
 		$factory = new SqlToQueryBuilderFactory( $sql );
 
-		return $factory->getQueryBuilder()->buildAll( $factory->buildSelectBuilder() );
+		return $factory->buildQueryBuilder()->buildAll( $factory->buildSelectBuilder() );
 	}
 
 	public function testSimpleWhereClause(): void
@@ -66,7 +66,7 @@ class SqlToQueryBuilderFactoryTest extends TestCase
 
 	public function testQueryWithoutAnyClause(): void
 	{
-		$queryBuilder = ( new SqlToQueryBuilderFactory( "SELECT * FROM users" ) )->getQueryBuilder();
+		$queryBuilder = ( new SqlToQueryBuilderFactory( "SELECT * FROM users" ) )->buildQueryBuilder();
 
 		$this->assertSame( ' WHERE 1', $queryBuilder->buildWhereStatement() );
 	}
@@ -74,7 +74,7 @@ class SqlToQueryBuilderFactoryTest extends TestCase
 	public function testPreparedParameters(): void
 	{
 		$params = ( new SqlToQueryBuilderFactory( "SELECT * FROM users WHERE id = :id AND name = :name" ) )
-			->getQueryBuilder()
+			->buildQueryBuilder()
 			->getPreparedParams();
 
 		$this->assertArrayHasKey( 'id', $params );
@@ -103,7 +103,7 @@ class SqlToQueryBuilderFactoryTest extends TestCase
 
 	public function testBuildWhereStatementAfterParsing(): void
 	{
-		$queryBuilder = ( new SqlToQueryBuilderFactory( "SELECT * FROM users WHERE id = 1" ) )->getQueryBuilder();
+		$queryBuilder = ( new SqlToQueryBuilderFactory( "SELECT * FROM users WHERE id = 1" ) )->buildQueryBuilder();
 
 		$this->assertStringContainsString( 'id = 1', $queryBuilder->buildWhereStatement() );
 	}

@@ -3,24 +3,28 @@
 namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\GroupByClauseParser;
 
 class GroupByBuilder
 {
-	private function __construct()
+	/**
+	 * @param RepresentsColumn[] $columns
+	 */
+	public function __construct( private readonly array $columns )
 	{
 	}
 
-	/**
-	 * @param RepresentsColumn[] $columns
-	 *
-	 * @return string
-	 */
-	public static function build( array $columns ): string
+	public static function fromSql( string $groupByClause ): self
 	{
-		if ( $columns )
+		return new self( GroupByClauseParser::parse( $groupByClause ) );
+	}
+
+	public function build(): string
+	{
+		if ( $this->columns )
 		{
 			$columnStrings = [];
-			foreach ( $columns as $column )
+			foreach ( $this->columns as $column )
 			{
 				$columnStrings[] = $column->toString();
 			}

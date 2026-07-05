@@ -5,18 +5,19 @@ namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 use ComponoKit\Databases\Sql\QueryBuilder\Helpers\Quoter;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsTableName;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\TableName;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\SelectFromParser;
 
 class SelectBuilder
 {
-	private function __construct(
-		private readonly array $selectExpressions,
-		private readonly ?RepresentsTableName $fromTable
+	public function __construct(
+		private readonly array $selectExpressions = ['*'],
+		private readonly ?RepresentsTableName $fromTable = null
 	) {
 	}
 
-	public static function create(): self
+	public static function fromSql( ?string $selectClause, ?string $fromClause ): self
 	{
-		return new self( ['*'], null );
+		return SelectFromParser::parse( $selectClause, $fromClause );
 	}
 
 	public function select( array $expressions ): self

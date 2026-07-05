@@ -150,7 +150,7 @@ class QueryFilterDistributor implements DistributesQueryFilters
 
 	public function getPreparedParams(): array
 	{
-		return WhereStatementBuilder::getPreparedParams( $this->getCriterias() );
+		return ( new WhereStatementBuilder( $this->getCriterias() ) )->getPreparedParams();
 	}
 
 	public function addJoinClause( RepresentsJoinClause $joinClause ): self

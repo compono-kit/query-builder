@@ -17,7 +17,7 @@ class JoinBuilderTest extends TestCase
 {
 	public function testEmptyJoinClausesReturnsEmptyString(): void
 	{
-		$this->assertSame('', JoinBuilder::build([]));
+		$this->assertSame('', ( new JoinBuilder([]) )->build());
 	}
 
 	public function testInnerJoinWithOnCondition(): void
@@ -30,7 +30,7 @@ class JoinBuilderTest extends TestCase
 		);
 
 		$joinClause = new JoinClause(new TableName('orders', 'o'), JoinType::INNER, $onCondition);
-		$output     = JoinBuilder::build([$joinClause]);
+		$output     = ( new JoinBuilder([$joinClause]) )->build();
 
 		$this->assertStringContainsString('INNER JOIN', $output);
 		$this->assertStringContainsString('orders', $output);
@@ -48,7 +48,7 @@ class JoinBuilderTest extends TestCase
 		);
 
 		$joinClause = new JoinClause(new TableName('orders'), JoinType::LEFT, $onCondition);
-		$output     = JoinBuilder::build([$joinClause]);
+		$output     = ( new JoinBuilder([$joinClause]) )->build();
 
 		$this->assertStringContainsString('LEFT JOIN', $output);
 	}
@@ -56,7 +56,7 @@ class JoinBuilderTest extends TestCase
 	public function testRightJoinWithOnCondition(): void
 	{
 		$joinClause = new JoinClause(new TableName('categories'), JoinType::RIGHT, null);
-		$output     = JoinBuilder::build([$joinClause]);
+		$output     = ( new JoinBuilder([$joinClause]) )->build();
 
 		$this->assertStringContainsString('RIGHT JOIN', $output);
 	}
@@ -64,7 +64,7 @@ class JoinBuilderTest extends TestCase
 	public function testCrossJoinWithoutOnCondition(): void
 	{
 		$joinClause = new JoinClause(new TableName('sizes'), JoinType::CROSS, null);
-		$output     = JoinBuilder::build([$joinClause]);
+		$output     = ( new JoinBuilder([$joinClause]) )->build();
 
 		$this->assertStringContainsString('CROSS JOIN', $output);
 		$this->assertStringNotContainsString('ON', $output);
@@ -74,7 +74,7 @@ class JoinBuilderTest extends TestCase
 	{
 		$joinClauseOne = new JoinClause(new TableName('orders'), JoinType::INNER, null);
 		$joinClauseTwo = new JoinClause(new TableName('products'), JoinType::LEFT, null);
-		$output        = JoinBuilder::build([$joinClauseOne, $joinClauseTwo]);
+		$output        = ( new JoinBuilder([$joinClauseOne, $joinClauseTwo]) )->build();
 
 		$this->assertStringContainsString('INNER JOIN', $output);
 		$this->assertStringContainsString('LEFT JOIN', $output);
@@ -83,15 +83,24 @@ class JoinBuilderTest extends TestCase
 	public function testJoinTableWithoutAlias(): void
 	{
 		$joinClause = new JoinClause(new TableName('orders'), JoinType::INNER, null);
-		$output     = JoinBuilder::build([$joinClause]);
+		$output     = ( new JoinBuilder([$joinClause]) )->build();
 
 		$this->assertSame(' INNER JOIN orders', $output);
+	}
+
+	public function testFromSqlParsesJoinClause(): void
+	{
+		$output = JoinBuilder::fromSql('INNER JOIN orders o ON u.id = o.user_id')->build();
+
+		$this->assertStringContainsString('INNER JOIN', $output);
+		$this->assertStringContainsString('orders', $output);
+		$this->assertStringContainsString(' o ', $output);
 	}
 
 	public function testTableNameWithHyphenIsQuoted(): void
 	{
 		$joinClause = new JoinClause(new TableName('delivery-orders'), JoinType::INNER, null);
-		$output     = JoinBuilder::build([$joinClause]);
+		$output     = ( new JoinBuilder([$joinClause]) )->build();
 
 		$this->assertStringContainsString('`delivery-orders`', $output);
 	}

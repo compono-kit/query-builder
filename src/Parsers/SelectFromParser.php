@@ -23,7 +23,7 @@ class SelectFromParser
 			throw new SqlParseException( 'Cannot build a SELECT statement without a FROM clause.' );
 		}
 
-		$selectBuilder = self::applyFrom( SelectBuilder::create(), $fromClause );
+		$selectBuilder = self::applyFrom( new SelectBuilder(), $fromClause );
 
 		return self::applySelect( $selectBuilder, $selectClause );
 	}

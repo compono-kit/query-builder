@@ -3,22 +3,26 @@
 namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
+use ComponoKit\Databases\Sql\QueryBuilder\Parsers\WhereClauseParser;
 
 class WhereStatementBuilder
 {
-	private function __construct()
+	/**
+	 * @param RepresentsCriteria[] $criterias
+	 */
+	public function __construct( private readonly array $criterias )
 	{
 	}
 
-	/**
-	 * @param RepresentsCriteria[] $criterias
-	 *
-	 * @return string
-	 */
-	public static function buildWhereStatement( array $criterias ): string
+	public static function fromSql( string $whereClause ): self
+	{
+		return new self( [ WhereClauseParser::parse( $whereClause ) ] );
+	}
+
+	public function buildWhereStatement(): string
 	{
 		$cleanedCriterias = [];
-		foreach ( $criterias as $criteria )
+		foreach ( $this->criterias as $criteria )
 		{
 			$cleanedCriterias[] = $criteria->toString();
 		}
@@ -28,18 +32,13 @@ class WhereStatementBuilder
 			return sprintf( ' WHERE %s', implode( ' AND ', $cleanedCriterias ) );
 		}
 
-		return ' WHERE 1';
+		return '';
 	}
 
-	/**
-	 * @param RepresentsCriteria[] $criterias
-	 *
-	 * @return array
-	 */
-	public static function getPreparedParams( array $criterias ): array
+	public function getPreparedParams(): array
 	{
 		$params = [];
-		foreach ( $criterias as $criteria )
+		foreach ( $this->criterias as $criteria )
 		{
 			foreach ( $criteria->getPreparedParameters() as $preparedParameter )
 			{

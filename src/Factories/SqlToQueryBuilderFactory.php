@@ -9,7 +9,6 @@ use ComponoKit\Databases\Sql\QueryBuilder\Parsers\GroupByClauseParser;
 use ComponoKit\Databases\Sql\QueryBuilder\Parsers\JoinClauseParser;
 use ComponoKit\Databases\Sql\QueryBuilder\Parsers\LimitClauseParser;
 use ComponoKit\Databases\Sql\QueryBuilder\Parsers\OrderByClauseParser;
-use ComponoKit\Databases\Sql\QueryBuilder\Parsers\SelectFromParser;
 use ComponoKit\Databases\Sql\QueryBuilder\Parsers\SqlClauseExtractor;
 use ComponoKit\Databases\Sql\QueryBuilder\Parsers\WhereClauseParser;
 
@@ -63,7 +62,7 @@ class SqlToQueryBuilderFactory
 	{
 		$clauses = $this->getExtractedClauses();
 
-		return SelectFromParser::parse( $clauses->select, $clauses->from );
+		return SelectBuilder::fromSql( $clauses->select, $clauses->from );
 	}
 
 	private function getExtractedClauses(): ExtractedClauses

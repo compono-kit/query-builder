@@ -109,42 +109,37 @@ class QueryBuilder implements BuildsQueries
 
 	public function buildJoin(): string
 	{
-		return JoinBuilder::build( $this->queryFilterDistributor->getJoinClauses() );
+		return ( new JoinBuilder( $this->queryFilterDistributor->getJoinClauses() ) )->build();
 	}
 
 	public function buildWhereStatement(): string
 	{
-		return WhereStatementBuilder::buildWhereStatement( $this->queryFilterDistributor->getCriterias() );
+		return ( new WhereStatementBuilder( $this->queryFilterDistributor->getCriterias() ) )->buildWhereStatement();
 	}
 
 	public function getPreparedParams(): array
 	{
-		return WhereStatementBuilder::getPreparedParams( $this->queryFilterDistributor->getCriterias() );
+		return ( new WhereStatementBuilder( $this->queryFilterDistributor->getCriterias() ) )->getPreparedParams();
 	}
 
 	public function buildGroupBy(): string
 	{
-		return GroupByBuilder::build( $this->queryFilterDistributor->getGroupByColumns() );
+		return ( new GroupByBuilder( $this->queryFilterDistributor->getGroupByColumns() ) )->build();
 	}
 
 	public function buildOrderBy(): string
 	{
-		return OrderByBuilder::build( $this->queryFilterDistributor->getOrderByList() );
+		return ( new OrderByBuilder( $this->queryFilterDistributor->getOrderByList() ) )->build();
 	}
 
 	public function buildLimit(): string
 	{
-		if ( null !== $this->queryFilterDistributor->getLimit() )
-		{
-			return LimitBuilder::build( $this->queryFilterDistributor->getLimit() );
-		}
-
-		return '';
+		return ( new LimitBuilder( $this->queryFilterDistributor->getLimit() ) )->build();
 	}
 
 	public function buildHaving(): string
 	{
-		return HavingBuilder::build( $this->queryFilterDistributor->getHavingCriterias() );
+		return ( new HavingBuilder( $this->queryFilterDistributor->getHavingCriterias() ) )->build();
 	}
 
 	public function buildAll( SelectBuilder $selectBuilder ): string
