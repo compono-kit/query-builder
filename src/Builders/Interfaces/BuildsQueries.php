@@ -27,32 +27,15 @@ interface BuildsQueries
 
 	public function buildAll( SelectBuilder $selectBuilder ): string;
 
-	public function addCriteria( RepresentsCriteria $criteria ): static;
+	public function addCriteria( RepresentsCriteria ...$criterias ): static;
 
-	public function addCriterias( array $criterias ): static;
+	public function addOrderBy( RepresentsOrderBy ...$orderByList ): static;
 
-	public function addOrderBy( RepresentsOrderBy $orderBy ): static;
+	public function addGroupByColumn( RepresentsColumn ...$columns ): static;
 
-	/**
-	 * @param RepresentsOrderBy[] $orderByList
-	 */
-	public function addOrderByList( array $orderByList ): static;
-
-	public function addGroupByColumn( RepresentsColumn $column ): static;
-
-	/**
-	 * @param RepresentsColumn[] $groupByColumns
-	 */
-	public function addGroupByList( array $groupByColumns ): static;
-
-	public function addHavingCriteria( RepresentsCriteria $criteria ): static;
+	public function addHavingCriteria( RepresentsCriteria ...$criterias ): static;
 
 	public function useLimit( RepresentsLimit $limit ): static;
 
-	public function addJoinClause( RepresentsJoinClause $joinClause ): static;
-
-	/**
-	 * @param RepresentsJoinClause[] $joinClauses
-	 */
-	public function addJoinClauses( array $joinClauses ): static;
+	public function addJoinClause( RepresentsJoinClause ...$joinClauses ): static;
 }

@@ -20,12 +20,12 @@ class SelectBuilder
 		return SelectFromParser::parse( $selectClause, $fromClause );
 	}
 
-	public function select( array $expressions ): self
+	public function useSelectExpressions( string ...$selectExpressions ): self
 	{
-		return new self( $expressions, $this->fromTable );
+		return new self( $selectExpressions, $this->fromTable );
 	}
 
-	public function from( string $table, ?string $alias = null ): self
+	public function useTable( string $table, ?string $alias = null ): self
 	{
 		return new self( $this->selectExpressions, new TableName( $table, $alias ) );
 	}
@@ -44,7 +44,7 @@ class SelectBuilder
 	{
 		if ( $this->fromTable === null )
 		{
-			throw new \LogicException( 'Cannot build query: from() has not been called.' );
+			throw new \LogicException( 'Cannot build query: useTable() has not been called.' );
 		}
 
 		return $this->buildSelect() . ' ' . $this->buildFrom();

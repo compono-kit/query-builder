@@ -11,7 +11,7 @@ class SelectBuilderTest extends TestCase
 	public function testBuildProducesCorrectSql(): void
 	{
 		$output = ( new QueryBuilder() )->buildAll(
-			( new SelectBuilder() )->from( 'users' )
+			( new SelectBuilder() )->useTable( 'users' )
 		);
 
 		$this->assertStringContainsString( 'SELECT *', $output );
@@ -21,8 +21,8 @@ class SelectBuilderTest extends TestCase
 	public function testSelectExpressionsAreRendered(): void
 	{
 		$output = ( new SelectBuilder() )
-			->from( 'users', 'u' )
-			->select( ['u.id', 'u.name', 'COUNT(*)'] )
+			->useTable( 'users', 'u' )
+			->useSelectExpressions( 'u.id', 'u.name', 'COUNT(*)' )
 			->build();
 
 		$this->assertStringContainsString( 'SELECT u.id, u.name, COUNT(*)', $output );
@@ -32,8 +32,8 @@ class SelectBuilderTest extends TestCase
 	public function testEmptySelectDefaultsToWildcard(): void
 	{
 		$output = ( new SelectBuilder() )
-			->from( 'users' )
-			->select( [] )
+			->useTable( 'users' )
+			->useSelectExpressions()
 			->build();
 
 		$this->assertStringContainsString( 'SELECT *', $output );
@@ -56,7 +56,7 @@ class SelectBuilderTest extends TestCase
 	public function testHeadComesBeforeClauseTail(): void
 	{
 		$output = ( new QueryBuilder() )->buildAll(
-			( new SelectBuilder() )->from( 'users' )
+			( new SelectBuilder() )->useTable( 'users' )
 		);
 
 		$selectPosition = strpos( $output, 'SELECT' );

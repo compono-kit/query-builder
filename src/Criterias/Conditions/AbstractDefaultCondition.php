@@ -3,6 +3,7 @@
 namespace ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\MissingValueException;
+use ComponoKit\Databases\Sql\QueryBuilder\Helpers\ComparisonValueFormatter;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsComparisonValue;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
@@ -45,7 +46,7 @@ abstract class AbstractDefaultCondition implements RepresentsCriteria
 			'%s %s %s',
 			$this->getColumn()->toString(),
 			$this->getComparisonOperator()->toString(),
-			$this->getValue()->isColumn() || !is_string( $this->getValue()->toRawType() ) ? $this->getValue()->toRawType() : "'" . $this->getValue()->toRawType() . "'"
+			ComparisonValueFormatter::format( $this->getValue() )
 		);
 	}
 

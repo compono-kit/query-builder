@@ -19,7 +19,7 @@ class QueryValidator
 
 		if ( $fromTable === null )
 		{
-			throw new \LogicException( 'Cannot validate query: from() has not been called.' );
+			throw new \LogicException( 'Cannot validate query: useTable() has not been called.' );
 		}
 
 		$aliasMap = self::buildAliasMap( $fromTable, $queryBuilder );

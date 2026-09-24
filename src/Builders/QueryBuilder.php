@@ -20,86 +20,34 @@ class QueryBuilder implements BuildsQueries
 		$this->queryFilterDistributor = $queryFilterDistributor ?? QueryFilterDistributor::newEmpty();
 	}
 
-	public function addOrderBy( RepresentsOrderBy $orderBy ): static
+	public function addOrderBy( RepresentsOrderBy ...$orderByList ): static
 	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addOrderBy( $orderBy );
-
-		return new self( $queryFilterDistributor );
-	}
-
-	/**
-	 * @param RepresentsOrderBy[] $orderByList
-	 */
-	public function addOrderByList( array $orderByList ): static
-	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addOrderByList( $orderByList );
-
-		return new self( $queryFilterDistributor );
+		return new self( $this->queryFilterDistributor->addOrderBy( ...$orderByList ) );
 	}
 
 	public function useLimit( RepresentsLimit $limit ): static
 	{
-		$queryFilterDistributor = $this->queryFilterDistributor->useLimit( $limit );
-
-		return new self( $queryFilterDistributor );
+		return new self( $this->queryFilterDistributor->useLimit( $limit ) );
 	}
 
-	public function addCriteria( RepresentsCriteria $criteria ): static
+	public function addCriteria( RepresentsCriteria ...$criterias ): static
 	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addCriteria( $criteria );
-
-		return new self( $queryFilterDistributor );
+		return new self( $this->queryFilterDistributor->addCriteria( ...$criterias ) );
 	}
 
-	/**
-	 * @param RepresentsCriteria[] $criterias
-	 */
-	public function addCriterias( array $criterias ): static
+	public function addHavingCriteria( RepresentsCriteria ...$criterias ): static
 	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addCriterias( $criterias );
-
-		return new self( $queryFilterDistributor );
+		return new self( $this->queryFilterDistributor->addHavingCriteria( ...$criterias ) );
 	}
 
-	public function addHavingCriteria( RepresentsCriteria $criteria ): static
+	public function addGroupByColumn( RepresentsColumn ...$columns ): static
 	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addHavingCriteria( $criteria );
-
-		return new self( $queryFilterDistributor );
+		return new self( $this->queryFilterDistributor->addGroupByColumn( ...$columns ) );
 	}
 
-	public function addGroupByColumn( RepresentsColumn $column ): static
+	public function addJoinClause( RepresentsJoinClause ...$joinClauses ): static
 	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addGroupByColumn( $column );
-
-		return new self( $queryFilterDistributor );
-	}
-
-	/**
-	 * @param RepresentsColumn[] $groupByColumns
-	 */
-	public function addGroupByList( array $groupByColumns ): static
-	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addGroupByList( $groupByColumns );
-
-		return new self( $queryFilterDistributor );
-	}
-
-	public function addJoinClause( RepresentsJoinClause $joinClause ): static
-	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addJoinClause( $joinClause );
-
-		return new self( $queryFilterDistributor );
-	}
-
-	/**
-	 * @param RepresentsJoinClause[] $joinClauses
-	 */
-	public function addJoinClauses( array $joinClauses ): static
-	{
-		$queryFilterDistributor = $this->queryFilterDistributor->addJoinClauses( $joinClauses );
-
-		return new self( $queryFilterDistributor );
+		return new self( $this->queryFilterDistributor->addJoinClause( ...$joinClauses ) );
 	}
 
 	public function getJoinClauses(): array

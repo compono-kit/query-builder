@@ -24,8 +24,8 @@ class QueryValidatorTest extends TestCase
 	public function testValidSchemaQueryPasses(): void
 	{
 		$selectBuilder = ( new SelectBuilder() )
-			->from( 'users', 'u' )
-			->select( ['u.id', 'u.name', 'u.email'] );
+			->useTable( 'users', 'u' )
+			->useSelectExpressions( 'u.id', 'u.name', 'u.email' );
 
 		QueryValidator::validate( $selectBuilder, new QueryBuilder(), self::schema() );
 
@@ -37,7 +37,7 @@ class QueryValidatorTest extends TestCase
 		$this->expectException( ValidationException::class );
 
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'nonexistent_table' ),
+			( new SelectBuilder() )->useTable( 'nonexistent_table' ),
 			new QueryBuilder(),
 			self::schema()
 		);
@@ -48,7 +48,7 @@ class QueryValidatorTest extends TestCase
 		$this->expectException( ValidationException::class );
 
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'users' ),
+			( new SelectBuilder() )->useTable( 'users' ),
 			( new QueryBuilder() )->addJoinClause( new JoinClause( new TableName( 'nonexistent_table' ), JoinType::INNER ) ),
 			self::schema()
 		);
@@ -59,7 +59,7 @@ class QueryValidatorTest extends TestCase
 		$this->expectException( ValidationException::class );
 
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'users', 'u' )->select( ['u.nonexistent_column'] ),
+			( new SelectBuilder() )->useTable( 'users', 'u' )->useSelectExpressions( 'u.nonexistent_column' ),
 			new QueryBuilder(),
 			self::schema()
 		);
@@ -68,7 +68,7 @@ class QueryValidatorTest extends TestCase
 	public function testRawExpressionsInSelectAreNotValidated(): void
 	{
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'users', 'u' )->select( ['COUNT(*)', '*', 'SUM(u.id)'] ),
+			( new SelectBuilder() )->useTable( 'users', 'u' )->useSelectExpressions( 'COUNT(*)', '*', 'SUM(u.id)' ),
 			new QueryBuilder(),
 			self::schema()
 		);
@@ -79,7 +79,7 @@ class QueryValidatorTest extends TestCase
 	public function testWildcardSelectIsNotValidated(): void
 	{
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'users', 'u' )->select( ['*'] ),
+			( new SelectBuilder() )->useTable( 'users', 'u' )->useSelectExpressions( '*' ),
 			new QueryBuilder(),
 			self::schema()
 		);
@@ -90,7 +90,7 @@ class QueryValidatorTest extends TestCase
 	public function testAliasResolutionWorksForSelectValidation(): void
 	{
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'users', 'u' )->select( ['u.id', 'u.name', 'o.total'] ),
+			( new SelectBuilder() )->useTable( 'users', 'u' )->useSelectExpressions( 'u.id', 'u.name', 'o.total' ),
 			( new QueryBuilder() )->addJoinClause( new JoinClause( new TableName( 'orders', 'o' ), JoinType::INNER ) ),
 			self::schema()
 		);
@@ -103,7 +103,7 @@ class QueryValidatorTest extends TestCase
 		$this->expectException( ValidationException::class );
 
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'users', 'u' )->select( ['u.total'] ),
+			( new SelectBuilder() )->useTable( 'users', 'u' )->useSelectExpressions( 'u.total' ),
 			new QueryBuilder(),
 			self::schema()
 		);
@@ -117,7 +117,7 @@ class QueryValidatorTest extends TestCase
 		);
 
 		QueryValidator::validate(
-			( new SelectBuilder() )->from( 'users', 'u' )->select( ['u.id'] ),
+			( new SelectBuilder() )->useTable( 'users', 'u' )->useSelectExpressions( 'u.id' ),
 			( new QueryBuilder() )->addJoinClause( new JoinClause( $subquery, JoinType::LEFT ) ),
 			self::schema()
 		);

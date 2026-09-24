@@ -18,39 +18,18 @@ interface DistributesQueryFilters
 
 	public function useLimit( RepresentsLimit $limit ): DistributesQueryFilters;
 
-	public function addOrderBy( RepresentsOrderBy $orderBy ): DistributesQueryFilters;
+	public function addOrderBy( RepresentsOrderBy ...$orderByList ): DistributesQueryFilters;
 
-	/**
-	 * @param RepresentsOrderBy[] $orderByList
-	 *
-	 * @return DistributesQueryFilters
-	 */
-	public function addOrderByList( array $orderByList ): DistributesQueryFilters;
+	public function addCriteria( RepresentsCriteria ...$criterias ): DistributesQueryFilters;
 
-	public function addCriteria( RepresentsCriteria $criteria ): DistributesQueryFilters;
-
-	/**
-	 * @param RepresentsCriteria[] $criterias
-	 *
-	 * @return DistributesQueryFilters
-	 */
-	public function addCriterias( array $criterias ): DistributesQueryFilters;
-
-	public function addHavingCriteria( RepresentsCriteria $criteria ): DistributesQueryFilters;
+	public function addHavingCriteria( RepresentsCriteria ...$criterias ): DistributesQueryFilters;
 
 	/**
 	 * @return RepresentsCriteria[]
 	 */
 	public function getHavingCriterias(): array;
 
-	public function addGroupByColumn( RepresentsColumn $column ): DistributesQueryFilters;
-
-	/**
-	 * @param RepresentsColumn[] $groupByColumns
-	 *
-	 * @return DistributesQueryFilters
-	 */
-	public function addGroupByList( array $groupByColumns ): DistributesQueryFilters;
+	public function addGroupByColumn( RepresentsColumn ...$columns ): DistributesQueryFilters;
 
 	/**
 	 * @return RepresentsColumn[]
@@ -59,14 +38,7 @@ interface DistributesQueryFilters
 
 	public function getPreparedParams(): array;
 
-	public function addJoinClause( RepresentsJoinClause $joinClause ): DistributesQueryFilters;
-
-	/**
-	 * @param RepresentsJoinClause[] $joinClauses
-	 *
-	 * @return DistributesQueryFilters
-	 */
-	public function addJoinClauses( array $joinClauses ): DistributesQueryFilters;
+	public function addJoinClause( RepresentsJoinClause ...$joinClauses ): DistributesQueryFilters;
 
 	/**
 	 * @return RepresentsJoinClause[]

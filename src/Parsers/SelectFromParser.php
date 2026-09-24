@@ -42,7 +42,7 @@ class SelectFromParser
 
 		$alias = isset( $matches[2] ) && $matches[2] !== '' ? $matches[2] : null;
 
-		return $selectBuilder->from( $matches[1], $alias );
+		return $selectBuilder->useTable( $matches[1], $alias );
 	}
 
 	private static function applySelect( SelectBuilder $selectBuilder, ?string $selectClause ): SelectBuilder
@@ -59,7 +59,7 @@ class SelectFromParser
 			return $selectBuilder;
 		}
 
-		return $selectBuilder->select( $expressions );
+		return $selectBuilder->useSelectExpressions( ...$expressions );
 	}
 
 	/**

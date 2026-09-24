@@ -27,7 +27,7 @@ class SqlToQueryBuilderFactory
 
 		if ( $clauses->join !== null )
 		{
-			$builder = $builder->addJoinClauses( JoinClauseParser::parse( $clauses->join ) );
+			$builder = $builder->addJoinClause( ...JoinClauseParser::parse( $clauses->join ) );
 		}
 
 		if ( $clauses->where !== null )
@@ -37,12 +37,12 @@ class SqlToQueryBuilderFactory
 
 		if ( $clauses->orderBy !== null )
 		{
-			$builder = $builder->addOrderByList( OrderByClauseParser::parse( $clauses->orderBy ) );
+			$builder = $builder->addOrderBy( ...OrderByClauseParser::parse( $clauses->orderBy ) );
 		}
 
 		if ( $clauses->groupBy !== null )
 		{
-			$builder = $builder->addGroupByList( GroupByClauseParser::parse( $clauses->groupBy ) );
+			$builder = $builder->addGroupByColumn( ...GroupByClauseParser::parse( $clauses->groupBy ) );
 		}
 
 		if ( $clauses->having !== null )

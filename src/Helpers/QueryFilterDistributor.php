@@ -55,62 +55,19 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		return new self( $this->whereCriterias, $this->orderByList, $limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
-	public function addOrderBy( RepresentsOrderBy $orderBy ): self
+	public function addOrderBy( RepresentsOrderBy ...$orderByList ): self
 	{
-		$orderByList   = $this->orderByList;
-		$orderByList[] = $orderBy;
-
-		return new self( $this->whereCriterias, $orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
+		return new self( $this->whereCriterias, [...$this->orderByList, ...$orderByList], $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
-	/**
-	 * @param RepresentsOrderBy[] $orderByList
-	 *
-	 * @return self
-	 */
-	public function addOrderByList( array $orderByList ): self
+	public function addCriteria( RepresentsCriteria ...$criterias ): self
 	{
-		$updatedOrderByList = $this->orderByList;
-
-		foreach ( $orderByList as $orderBy )
-		{
-			$updatedOrderByList[] = $orderBy;
-		}
-
-		return new self( $this->whereCriterias, $updatedOrderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
+		return new self( [...$this->whereCriterias, ...$criterias], $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
 	}
 
-	public function addCriteria( RepresentsCriteria $criteria ): self
+	public function addHavingCriteria( RepresentsCriteria ...$criterias ): self
 	{
-		$criterias   = $this->whereCriterias;
-		$criterias[] = $criteria;
-
-		return new self( $criterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
-	}
-
-	/**
-	 * @param RepresentsCriteria[] $criterias
-	 *
-	 * @return $this
-	 */
-	public function addCriterias( array $criterias ): self
-	{
-		$allCriterias = $this->whereCriterias;
-
-		foreach ( $criterias as $additionalCriteria )
-		{
-			$allCriterias[] = $additionalCriteria;
-		}
-
-		return new self( $allCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $this->joinClauses );
-	}
-
-	public function addHavingCriteria( RepresentsCriteria $criteria ): self
-	{
-		$havingCriterias   = $this->havingCriterias;
-		$havingCriterias[] = $criteria;
-
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $havingCriterias, $this->groupByColumns, $this->joinClauses );
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, [...$this->havingCriterias, ...$criterias], $this->groupByColumns, $this->joinClauses );
 	}
 
 	public function getHavingCriterias(): array
@@ -118,29 +75,9 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		return $this->havingCriterias;
 	}
 
-	public function addGroupByColumn( RepresentsColumn $column ): self
+	public function addGroupByColumn( RepresentsColumn ...$columns ): self
 	{
-		$groupByColumns   = $this->groupByColumns;
-		$groupByColumns[] = $column;
-
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $groupByColumns, $this->joinClauses );
-	}
-
-	/**
-	 * @param RepresentsColumn[] $groupByColumns
-	 *
-	 * @return self
-	 */
-	public function addGroupByList( array $groupByColumns ): self
-	{
-		$updatedGroupByColumns = $this->groupByColumns;
-
-		foreach ( $groupByColumns as $column )
-		{
-			$updatedGroupByColumns[] = $column;
-		}
-
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $updatedGroupByColumns, $this->joinClauses );
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, [...$this->groupByColumns, ...$columns], $this->joinClauses );
 	}
 
 	public function getGroupByColumns(): array
@@ -153,27 +90,9 @@ class QueryFilterDistributor implements DistributesQueryFilters
 		return ( new WhereStatementBuilder( $this->getCriterias() ) )->getPreparedParams();
 	}
 
-	public function addJoinClause( RepresentsJoinClause $joinClause ): self
+	public function addJoinClause( RepresentsJoinClause ...$joinClauses ): self
 	{
-		$joinClauses   = $this->joinClauses;
-		$joinClauses[] = $joinClause;
-
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $joinClauses );
-	}
-
-	/**
-	 * @param RepresentsJoinClause[] $joinClauses
-	 */
-	public function addJoinClauses( array $joinClauses ): self
-	{
-		$updatedJoinClauses = $this->joinClauses;
-
-		foreach ( $joinClauses as $joinClause )
-		{
-			$updatedJoinClauses[] = $joinClause;
-		}
-
-		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, $updatedJoinClauses );
+		return new self( $this->whereCriterias, $this->orderByList, $this->limit, $this->havingCriterias, $this->groupByColumns, [...$this->joinClauses, ...$joinClauses] );
 	}
 
 	public function getJoinClauses(): array
