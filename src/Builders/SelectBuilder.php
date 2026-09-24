@@ -2,12 +2,14 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces\BuildsQueries;
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces\BuildsStatements;
 use ComponoKit\Databases\Sql\QueryBuilder\Helpers\Quoter;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsTableName;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\TableName;
 use ComponoKit\Databases\Sql\QueryBuilder\Parsers\SelectFromParser;
 
-class SelectBuilder
+class SelectBuilder implements BuildsStatements
 {
 	public function __construct(
 		private readonly array $selectExpressions = ['*'],
@@ -40,7 +42,23 @@ class SelectBuilder
 		return $this->fromTable;
 	}
 
-	public function build(): string
+	public function build( BuildsQueries $queryBuilder ): string
+	{
+		return $this->buildSelectFrom()
+			. $queryBuilder->buildJoin()
+			. $queryBuilder->buildWhereStatement()
+			. $queryBuilder->buildGroupBy()
+			. $queryBuilder->buildHaving()
+			. $queryBuilder->buildOrderBy()
+			. $queryBuilder->buildLimit();
+	}
+
+	public function getPreparedParams( BuildsQueries $queryBuilder ): array
+	{
+		return $queryBuilder->getPreparedParams();
+	}
+
+	public function buildSelectFrom(): string
 	{
 		if ( $this->fromTable === null )
 		{

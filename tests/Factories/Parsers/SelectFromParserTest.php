@@ -10,42 +10,42 @@ class SelectFromParserTest extends TestCase
 {
 	public function testDefaultsToSelectStarWhenSelectIsNull(): void
 	{
-		$output = SelectFromParser::parse( null, 'users' )->build();
+		$output = SelectFromParser::parse( null, 'users' )->buildSelectFrom();
 
 		$this->assertSame( 'SELECT * FROM users', $output );
 	}
 
 	public function testDefaultsToSelectStarWhenSelectIsStar(): void
 	{
-		$output = SelectFromParser::parse( '*', 'users' )->build();
+		$output = SelectFromParser::parse( '*', 'users' )->buildSelectFrom();
 
 		$this->assertSame( 'SELECT * FROM users', $output );
 	}
 
 	public function testParsesSelectExpressions(): void
 	{
-		$output = SelectFromParser::parse( 'id, name', 'users' )->build();
+		$output = SelectFromParser::parse( 'id, name', 'users' )->buildSelectFrom();
 
 		$this->assertSame( 'SELECT id, name FROM users', $output );
 	}
 
 	public function testKeepsCommasInsideFunctionCalls(): void
 	{
-		$output = SelectFromParser::parse( "COUNT(id), COALESCE(name, 'x')", 'users' )->build();
+		$output = SelectFromParser::parse( "COUNT(id), COALESCE(name, 'x')", 'users' )->buildSelectFrom();
 
 		$this->assertSame( "SELECT COUNT(id), COALESCE(name, 'x') FROM users", $output );
 	}
 
 	public function testParsesFromWithAlias(): void
 	{
-		$output = SelectFromParser::parse( '*', 'users u' )->build();
+		$output = SelectFromParser::parse( '*', 'users u' )->buildSelectFrom();
 
 		$this->assertSame( 'SELECT * FROM users u', $output );
 	}
 
 	public function testParsesFromWithAsAlias(): void
 	{
-		$output = SelectFromParser::parse( '*', 'users AS u' )->build();
+		$output = SelectFromParser::parse( '*', 'users AS u' )->buildSelectFrom();
 
 		$this->assertSame( 'SELECT * FROM users u', $output );
 	}

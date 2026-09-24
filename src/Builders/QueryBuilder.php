@@ -3,6 +3,7 @@
 namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
 use ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces\BuildsQueries;
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces\BuildsStatements;
 use ComponoKit\Databases\Sql\QueryBuilder\Helpers\QueryFilterDistributor;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
@@ -90,8 +91,13 @@ class QueryBuilder implements BuildsQueries
 		return ( new HavingBuilder( $this->queryFilterDistributor->getHavingCriterias() ) )->build();
 	}
 
-	public function buildAll( SelectBuilder $selectBuilder ): string
+	public function buildAll( BuildsStatements $statementBuilder ): string
 	{
-		return $selectBuilder->build() . $this->buildJoin() . $this->buildWhereStatement() . $this->buildGroupBy() . $this->buildHaving() . $this->buildOrderBy() . $this->buildLimit();
+		return $statementBuilder->build( $this );
+	}
+
+	public function getStatementPreparedParams( BuildsStatements $statementBuilder ): array
+	{
+		return $statementBuilder->getPreparedParams( $this );
 	}
 }

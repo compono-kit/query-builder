@@ -2,7 +2,6 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces;
 
-use ComponoKit\Databases\Sql\QueryBuilder\Builders\SelectBuilder;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsColumn;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsJoinClause;
@@ -25,7 +24,9 @@ interface BuildsQueries
 
 	public function buildHaving(): string;
 
-	public function buildAll( SelectBuilder $selectBuilder ): string;
+	public function buildAll( BuildsStatements $statementBuilder ): string;
+
+	public function getStatementPreparedParams( BuildsStatements $statementBuilder ): array;
 
 	public function addCriteria( RepresentsCriteria ...$criterias ): static;
 

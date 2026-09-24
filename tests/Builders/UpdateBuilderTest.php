@@ -2,6 +2,7 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Tests\Builders;
 
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\QueryBuilder;
 use ComponoKit\Databases\Sql\QueryBuilder\Builders\UpdateBuilder;
 use ComponoKit\Databases\Sql\QueryBuilder\Criterias\Conditions\Condition;
 use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\MissingValueException;
@@ -28,42 +29,42 @@ class UpdateBuilderTest extends TestCase
 {
 	public function testBuildRendersPreparedParameterAndLiterals(): void
 	{
-		$output = ( new UpdateBuilder() )
+		$updateBuilder = ( new UpdateBuilder() )
 			->useTable( 'users' )
 			->addConditionValue( new PreparedParameterCondition( $this->column( 'name' ), new PreparedParameter( 'name', 'Max' ) ) )
 			->addConditionValue(
 				new ComparisonValueCondition( $this->column( 'status' ), new ComparisonValue( 'active' ) ),
 				new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 42 ) )
-			)
-			->build();
+			);
+
+		$output = ( new QueryBuilder() )->buildAll( $updateBuilder );
 
 		$this->assertSame( "UPDATE users SET name = :name, status = 'active', age = 42 WHERE 1", $output );
 	}
 
 	public function testTableAliasIsRendered(): void
 	{
-		$output = ( new UpdateBuilder() )
+		$updateBuilder = ( new UpdateBuilder() )
 			->useTable( 'users', 'u' )
-			->addConditionValue( new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) ) )
-			->build();
+			->addConditionValue( new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) ) );
 
-		$this->assertSame( 'UPDATE users u SET age = 1 WHERE 1', $output );
+		$this->assertSame( 'UPDATE users u SET age = 1 WHERE 1', ( new QueryBuilder() )->buildAll( $updateBuilder ) );
 	}
 
 	public function testMissingTableThrowsException(): void
 	{
 		$this->expectException( \LogicException::class );
 
-		( new UpdateBuilder() )
-			->addConditionValue( new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) ) )
-			->build();
+		( new QueryBuilder() )->buildAll(
+			( new UpdateBuilder() )->addConditionValue( new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) ) )
+		);
 	}
 
 	public function testMissingConditionValuesThrowsException(): void
 	{
 		$this->expectException( \LogicException::class );
 
-		( new UpdateBuilder() )->useTable( 'users' )->build();
+		( new QueryBuilder() )->buildAll( ( new UpdateBuilder() )->useTable( 'users' ) );
 	}
 
 	public function testConditionValueWithoutValueThrowsException(): void
@@ -91,18 +92,20 @@ class UpdateBuilderTest extends TestCase
 
 		$this->expectException( MissingValueException::class );
 
-		( new UpdateBuilder() )->useTable( 'users' )->addConditionValue( $conditionValue )->build();
+		( new QueryBuilder() )->buildAll( ( new UpdateBuilder() )->useTable( 'users' )->addConditionValue( $conditionValue ) );
 	}
 
-	public function testGetPreparedParamsReturnsConditionValueParameters(): void
+	public function testGroupByThrowsException(): void
 	{
-		$params = ( new UpdateBuilder() )
-			->useTable( 'users' )
-			->addConditionValue( new PreparedParameterCondition( $this->column( 'name' ), new PreparedParameter( 'name', 'Max' ) ) )
-			->addConditionValue( new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) ) )
-			->getPreparedParams();
+		$this->expectException( \LogicException::class );
 
-		$this->assertSame( ['name' => 'Max'], $params );
+		( new QueryBuilder() )
+			->addGroupByColumn( $this->column( 'status' ) )
+			->buildAll(
+				( new UpdateBuilder() )
+					->useTable( 'users' )
+					->addConditionValue( new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) ) )
+			);
 	}
 
 	public function testBuildRendersCompleteUpdateStatement(): void
@@ -114,14 +117,16 @@ class UpdateBuilderTest extends TestCase
 			new ComparisonColumn( new Column( new TableName( 'o' ), new ColumnName( 'user_id' ) ) )
 		);
 
-		$output = ( new UpdateBuilder() )
+		$updateBuilder = ( new UpdateBuilder() )
 			->useTable( 'users', 'u' )
-			->addConditionValue( new PreparedParameterCondition( $this->column( 'name' ), new PreparedParameter( 'name', 'Max' ) ) )
+			->addConditionValue( new PreparedParameterCondition( $this->column( 'name' ), new PreparedParameter( 'name', 'Max' ) ) );
+
+		$output = ( new QueryBuilder() )
 			->addJoinClause( new JoinClause( new TableName( 'orders', 'o' ), JoinType::INNER, $joinCondition ) )
 			->addCriteria( $this->idCriteria( '5' ) )
 			->addOrderBy( new OrderBy( $this->column( 'id' ) ) )
 			->useLimit( new Limit( 10 ) )
-			->build();
+			->buildAll( $updateBuilder );
 
 		$this->assertStringStartsWith( 'UPDATE users u INNER JOIN', $output );
 		$this->assertLessThan( strpos( $output, ' SET ' ), strpos( $output, 'INNER JOIN' ) );
@@ -130,13 +135,27 @@ class UpdateBuilderTest extends TestCase
 		$this->assertStringEndsWith( ' LIMIT 10', $output );
 	}
 
+	public function testGetPreparedParamsReturnsConditionValueParameters(): void
+	{
+		$updateBuilder = ( new UpdateBuilder() )
+			->useTable( 'users' )
+			->addConditionValue(
+				new PreparedParameterCondition( $this->column( 'name' ), new PreparedParameter( 'name', 'Max' ) ),
+				new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) )
+			);
+
+		$this->assertSame( ['name' => 'Max'], ( new QueryBuilder() )->getStatementPreparedParams( $updateBuilder ) );
+	}
+
 	public function testUpdatePreparedParamsAreMerged(): void
 	{
-		$params = ( new UpdateBuilder() )
+		$updateBuilder = ( new UpdateBuilder() )
 			->useTable( 'users' )
-			->addConditionValue( new PreparedParameterCondition( $this->column( 'name' ), new PreparedParameter( 'name', 'Max' ) ) )
+			->addConditionValue( new PreparedParameterCondition( $this->column( 'name' ), new PreparedParameter( 'name', 'Max' ) ) );
+
+		$params = ( new QueryBuilder() )
 			->addCriteria( $this->idCriteria( '5' ) )
-			->getPreparedParams();
+			->getStatementPreparedParams( $updateBuilder );
 
 		$this->assertSame( ['name' => 'Max', 'id' => '5'], $params );
 	}
@@ -145,11 +164,13 @@ class UpdateBuilderTest extends TestCase
 	{
 		$this->expectException( \LogicException::class );
 
-		( new UpdateBuilder() )
+		$updateBuilder = ( new UpdateBuilder() )
 			->useTable( 'users' )
-			->addConditionValue( new PreparedParameterCondition( $this->column( 'id' ), new PreparedParameter( 'id', '6' ) ) )
+			->addConditionValue( new PreparedParameterCondition( $this->column( 'id' ), new PreparedParameter( 'id', '6' ) ) );
+
+		( new QueryBuilder() )
 			->addCriteria( $this->idCriteria( '5' ) )
-			->getPreparedParams();
+			->getStatementPreparedParams( $updateBuilder );
 	}
 
 	private function column( string $name ): Column

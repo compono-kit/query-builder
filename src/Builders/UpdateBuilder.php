@@ -2,62 +2,34 @@
 
 namespace ComponoKit\Databases\Sql\QueryBuilder\Builders;
 
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces\BuildsQueries;
+use ComponoKit\Databases\Sql\QueryBuilder\Builders\Interfaces\BuildsStatements;
 use ComponoKit\Databases\Sql\QueryBuilder\Exceptions\MissingValueException;
 use ComponoKit\Databases\Sql\QueryBuilder\Helpers\ComparisonValueFormatter;
-use ComponoKit\Databases\Sql\QueryBuilder\Helpers\QueryFilterDistributor;
 use ComponoKit\Databases\Sql\QueryBuilder\Helpers\Quoter;
-use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\DistributesQueryFilters;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsConditionValue;
-use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsCriteria;
-use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsJoinClause;
-use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsLimit;
-use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsOrderBy;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\Interfaces\RepresentsTableName;
 use ComponoKit\Databases\Sql\QueryBuilder\Models\TableName;
 
-class UpdateBuilder
+class UpdateBuilder implements BuildsStatements
 {
-	private readonly DistributesQueryFilters $queryFilterDistributor;
-
 	/**
 	 * @param RepresentsConditionValue[] $conditionValues
 	 */
 	public function __construct(
 		private readonly ?RepresentsTableName $table = null,
-		private readonly array $conditionValues = [],
-		?DistributesQueryFilters $queryFilterDistributor = null
+		private readonly array $conditionValues = []
 	) {
-		$this->queryFilterDistributor = $queryFilterDistributor ?? QueryFilterDistributor::newEmpty();
 	}
 
 	public function useTable( string $table, ?string $alias = null ): self
 	{
-		return new self( new TableName( $table, $alias ), $this->conditionValues, $this->queryFilterDistributor );
+		return new self( new TableName( $table, $alias ), $this->conditionValues );
 	}
 
 	public function addConditionValue( RepresentsConditionValue ...$conditionValues ): self
 	{
-		return new self( $this->table, [...$this->conditionValues, ...$conditionValues], $this->queryFilterDistributor );
-	}
-
-	public function addCriteria( RepresentsCriteria ...$criterias ): self
-	{
-		return new self( $this->table, $this->conditionValues, $this->queryFilterDistributor->addCriteria( ...$criterias ) );
-	}
-
-	public function addJoinClause( RepresentsJoinClause ...$joinClauses ): self
-	{
-		return new self( $this->table, $this->conditionValues, $this->queryFilterDistributor->addJoinClause( ...$joinClauses ) );
-	}
-
-	public function addOrderBy( RepresentsOrderBy ...$orderByList ): self
-	{
-		return new self( $this->table, $this->conditionValues, $this->queryFilterDistributor->addOrderBy( ...$orderByList ) );
-	}
-
-	public function useLimit( RepresentsLimit $limit ): self
-	{
-		return new self( $this->table, $this->conditionValues, $this->queryFilterDistributor->useLimit( $limit ) );
+		return new self( $this->table, [...$this->conditionValues, ...$conditionValues] );
 	}
 
 	public function getTable(): ?RepresentsTableName
@@ -73,17 +45,22 @@ class UpdateBuilder
 		return $this->conditionValues;
 	}
 
-	public function build(): string
+	public function build( BuildsQueries $queryBuilder ): string
 	{
+		if ( $queryBuilder->buildGroupBy() !== '' || $queryBuilder->buildHaving() !== '' )
+		{
+			throw new \LogicException( 'GROUP BY/HAVING is not supported in UPDATE statements.' );
+		}
+
 		return $this->buildTable()
-			. ( new JoinBuilder( $this->queryFilterDistributor->getJoinClauses() ) )->build()
+			. $queryBuilder->buildJoin()
 			. $this->buildSet()
-			. ( new WhereStatementBuilder( $this->queryFilterDistributor->getCriterias() ) )->buildWhereStatement()
-			. ( new OrderByBuilder( $this->queryFilterDistributor->getOrderByList() ) )->build()
-			. ( new LimitBuilder( $this->queryFilterDistributor->getLimit() ) )->build();
+			. $queryBuilder->buildWhereStatement()
+			. $queryBuilder->buildOrderBy()
+			. $queryBuilder->buildLimit();
 	}
 
-	public function getPreparedParams(): array
+	public function getPreparedParams( BuildsQueries $queryBuilder ): array
 	{
 		$params = [];
 		foreach ( $this->conditionValues as $conditionValue )
@@ -94,7 +71,7 @@ class UpdateBuilder
 			}
 		}
 
-		foreach ( $this->queryFilterDistributor->getPreparedParams() as $name => $value )
+		foreach ( $queryBuilder->getPreparedParams() as $name => $value )
 		{
 			if ( array_key_exists( $name, $params ) && $params[ $name ] !== $value )
 			{

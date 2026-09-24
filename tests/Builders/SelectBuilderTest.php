@@ -23,7 +23,7 @@ class SelectBuilderTest extends TestCase
 		$output = ( new SelectBuilder() )
 			->useTable( 'users', 'u' )
 			->useSelectExpressions( 'u.id', 'u.name', 'COUNT(*)' )
-			->build();
+			->buildSelectFrom();
 
 		$this->assertStringContainsString( 'SELECT u.id, u.name, COUNT(*)', $output );
 		$this->assertStringContainsString( 'FROM users u', $output );
@@ -34,7 +34,7 @@ class SelectBuilderTest extends TestCase
 		$output = ( new SelectBuilder() )
 			->useTable( 'users' )
 			->useSelectExpressions()
-			->build();
+			->buildSelectFrom();
 
 		$this->assertStringContainsString( 'SELECT *', $output );
 	}
@@ -43,12 +43,12 @@ class SelectBuilderTest extends TestCase
 	{
 		$this->expectException( \LogicException::class );
 
-		( new SelectBuilder() )->build();
+		( new SelectBuilder() )->buildSelectFrom();
 	}
 
 	public function testFromSqlParsesSelectAndFrom(): void
 	{
-		$output = SelectBuilder::fromSql( 'id, name', 'users u' )->build();
+		$output = SelectBuilder::fromSql( 'id, name', 'users u' )->buildSelectFrom();
 
 		$this->assertSame( 'SELECT id, name FROM users u', $output );
 	}

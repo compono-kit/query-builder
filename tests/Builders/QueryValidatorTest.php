@@ -29,7 +29,7 @@ class QueryValidatorTest extends TestCase
 
 		QueryValidator::validate( $selectBuilder, new QueryBuilder(), self::schema() );
 
-		$this->assertStringContainsString( 'SELECT u.id, u.name, u.email', $selectBuilder->build() );
+		$this->assertStringContainsString( 'SELECT u.id, u.name, u.email', $selectBuilder->buildSelectFrom() );
 	}
 
 	public function testInvalidFromTableThrows(): void
