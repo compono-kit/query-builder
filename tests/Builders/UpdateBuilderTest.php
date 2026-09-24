@@ -39,7 +39,7 @@ class UpdateBuilderTest extends TestCase
 
 		$output = ( new QueryBuilder() )->buildAll( $updateBuilder );
 
-		$this->assertSame( "UPDATE users SET name = :name, status = 'active', age = 42 WHERE 1", $output );
+		$this->assertSame( "UPDATE users SET name = :name, status = 'active', age = 42", $output );
 	}
 
 	public function testTableAliasIsRendered(): void
@@ -48,7 +48,7 @@ class UpdateBuilderTest extends TestCase
 			->useTable( 'users', 'u' )
 			->addConditionValue( new ComparisonValueCondition( $this->column( 'age' ), new ComparisonValue( 1 ) ) );
 
-		$this->assertSame( 'UPDATE users u SET age = 1 WHERE 1', ( new QueryBuilder() )->buildAll( $updateBuilder ) );
+		$this->assertSame( 'UPDATE users u SET age = 1', ( new QueryBuilder() )->buildAll( $updateBuilder ) );
 	}
 
 	public function testMissingTableThrowsException(): void
